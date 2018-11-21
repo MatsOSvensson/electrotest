@@ -10,7 +10,7 @@ Rules that compiles ‘.c’ files into ‘.o’ files:
     %.o : %.c
       $(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-// work in a folder named lib
+Work in a folder named lib
 
     lib/%.o: lib/%.c
       $(CC) -fPIC -c $(CFLAGS) $(CPPFLAGS) $< -o $@
