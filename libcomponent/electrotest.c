@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "resistance.h"
+#include "power.h"
+#include "component.h"
 
 /*
 Huvudprogram som tar in uppgfiter från användaren,
@@ -16,6 +18,8 @@ gör uträkningar som ger svar till användaren
     float comp;
     float *compArray;
     float ohm;
+    float power;
+    float *compChange;
 
 
 //Värden från användaren
@@ -34,15 +38,21 @@ gör uträkningar som ger svar till användaren
       compArray[i] = comp;
     }
     
+    compChange = (float *)malloc(count * sizeof(float));
+  
+    //Uträkningar
     ohm = calc_resistance(count, coon, compArray);
- 
+    power = calc_power_r(2.5, 20.3);
+    compChange = e_resistance(40, compArray);
+
+    //Output av uträkningar
     printf("Ersättningsresistans:\n%0.1f ohm", ohm);
-    printf("\nEffekt:\n");
-    printf("Ersättningsresistanser i E12-serien kopplade i serie:\n");
+    printf("\nEffekt:\n%0.2f W", power);
+    printf("\nErsättningsresistanser i E12-serien kopplade i serie:\n");
 
     for(int i = 0; i < count; i++){
 
-      printf("\n");
+      printf("\n%d", compChange[i]);
 
     }
 
