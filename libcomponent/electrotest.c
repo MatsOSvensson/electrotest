@@ -19,7 +19,7 @@ gör uträkningar som ger svar till användaren
     float *compArray;
     float ohm;
     float power;
-    float *compChange;
+    int *compChange;
 
 
 //Värden från användaren
@@ -38,12 +38,14 @@ gör uträkningar som ger svar till användaren
       compArray[i] = comp;
     }
     
-    compChange = (float *)malloc(count * sizeof(float));
+    compChange = (int *)malloc(count * sizeof(int));
   
     //Uträkningar
     ohm = calc_resistance(count, coon, compArray);
-    power = calc_power_r(2.5, 20.3);
-    compChange = e_resistance(40, compArray);
+    //placeholder, saved for power calc
+    power = 500;
+    //power = calc_power_r();
+    //compChange = e_resistance();
 
     //Output av uträkningar
     printf("Ersättningsresistans:\n%0.1f ohm", ohm);
@@ -51,8 +53,9 @@ gör uträkningar som ger svar till användaren
     printf("\nErsättningsresistanser i E12-serien kopplade i serie:\n");
 
     for(int i = 0; i < count; i++){
-
-      printf("\n%d", compChange[i]);
+     //placeholder, space saved for ersättningsresistanser
+     printf("%d\n", (i + 1));
+     // printf("\n%d", compChange[i]);
 
     }
 
