@@ -19,7 +19,8 @@ gör uträkningar som ger svar till användaren
     float *compArray;
     float ohm;
     float power;
-    int *compChange;
+//    int array to be used when saving component values    
+//    int *compChange;
 
 
 //Värden från användaren
@@ -37,14 +38,15 @@ gör uträkningar som ger svar till användaren
       scanf("%f", &comp);
       compArray[i] = comp;
     }
-    
-    compChange = (int *)malloc(count * sizeof(int));
+//    Used later when components ready    
+//    compChange = (int *)malloc(count * sizeof(int));
   
     //Uträkningar
     ohm = calc_resistance(count, coon, compArray);
     //placeholder, saved for power calc
     power = 500;
     //power = calc_power_r();
+    //power = calc_power_i();
     //compChange = e_resistance();
 
     //Output av uträkningar
