@@ -1,6 +1,8 @@
+/*
+    Mats Svensson
+*/
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "component.h"
 
 int get_nearest_e12_resistance(float org_res);
@@ -18,9 +20,6 @@ const int number_of_decades = 6;
 */
 int e_resistance(float orig_resistance, float *res_array)
 {
-    // fill array with zero's
-    memset(res_array, 0, 3 * sizeof(float));
-
     // number of resulting resistances
     int count = 0;
 
@@ -50,9 +49,8 @@ int e_resistance(float orig_resistance, float *res_array)
 // 0 if to low
 int get_nearest_e12_resistance(float orig_resistance)
 {
+    // E12 series of resitances
     int e12_array[number_e12_res];
-    int decade_array[number_of_decades];
-
     e12_array[0] = 10;
     e12_array[1] = 12;
     e12_array[2] = 15;
@@ -66,6 +64,8 @@ int get_nearest_e12_resistance(float orig_resistance)
     e12_array[10] = 68;
     e12_array[11] = 82;
 
+    // Arrat to multiply the resistances up to 8,2 MOhm
+    int decade_array[number_of_decades];
     decade_array[0] = 1;
     decade_array[1] = 10;
     decade_array[2] = 100;
@@ -78,24 +78,23 @@ int get_nearest_e12_resistance(float orig_resistance)
     // iterate over the decades, from low to high
     for (size_t d = 0; d < number_of_decades; d++)
     {
-        //printf("d:%d\n", d);
-
         // iterate over the e12 resistances, from low to high
         for (size_t e = 0; e < number_e12_res; e++)
         {
-            //printf("e:%d\n", e);
-
             //  ...and multiply the value with decade value
             int e12 = e12_array[e] * decade_array[d];
 
-            //printf("res_value:%d\n", e12);
-
             if (e12 > orig_resistance)
             {
-                // Hey!, current e12 is higher than original resistance...
-                //printf("found :%d\n", previous_value);
+                // Hey!, current e12 is higher than input resistance...
 
-                // ...return the previous value wich was lower
+                if(e12 == e12_array[0])
+                {
+                    // The input value is lower than the lowest in E12 series
+                    return 0;
+                }
+
+                // ...return the previous value which was lower
                 return previous_value;
             }
 
