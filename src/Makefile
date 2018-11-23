@@ -25,7 +25,7 @@ all: directories electrotest
 lib: libcomponent.so libpower.so libresistance.so
 
 #LDFLAGS := -L<path to lib> -l<libname>
-electrotest: libcomponent.so libpower.so libresistance.so
+electrotest: libcomponent.so libpower.so libresistance.so electrotest.c
 	$(CC) -o $@ electrotest.c -L. -lcomponent -lpower -lresistance -Wl,-rpath,.
 
 #The shared library is created with: 

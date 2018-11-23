@@ -76,11 +76,11 @@ int main(){
     Räkna ut effekt
 
   */
-  //placeholder, saved for power calc
-  power = 500;
-  //power = calc_power_r();
-  //power = calc_power_i();
-  //compChange = e_resistance();
+  power = calc_power_r(volt, ohm);
+  
+  // Anrop och utskrift av den andra funktionen 
+  //printf("power (current) %0.2f", calc_power_i(volt, (volt/ohm)));
+  
 
 
 
@@ -109,7 +109,12 @@ int main(){
   */
 
   printf("Ersättningsresistans:\n%0.1f ohm", ohm);
-  printf("\nEffekt:\n%0.2f W", power);
+  if(power < 0) {
+    printf("\nVolt och/eller resistansen är 0, ingen mening att räkna ut effekten!");
+  } else {
+    printf("\nEffekt:\n%0.2f W", power);
+  }
+  
   printf("\nErsättningsresistanser i E12-serien kopplade i serie:\n");
 
   for(int i = 0; i < count_e12; i++){
