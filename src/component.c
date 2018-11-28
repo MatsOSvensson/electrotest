@@ -20,20 +20,6 @@ const int number_of_decades = 6;
 int e_resistance(float orig_resistance, float *res_array)
 {
 
-    if  (orig_resistance < 0)
-    {
-        // this is a guard for values lower then 0
-        return 0;
-    }
-
-    if  (orig_resistance < 10)
-    {
-        // this is a guard for an input value lower than the lowest e12
-        // I choose to return 10 Ohm instead of 0 Ohm
-        res_array[0] = 10;
-        return 1;
-    }
-
     // number of resulting resistances
     int count = 0;
 
@@ -42,6 +28,24 @@ int e_resistance(float orig_resistance, float *res_array)
 
     do
     {
+        //printf("%.01f\n", orig_resistance);
+
+        if  (orig_resistance < 1)
+        {
+            // this is a guard for values lower then 0
+            //printf("orig_resistance is lower then 0\n");
+            return count;
+        }
+
+        if  (orig_resistance < 10)
+        {
+            //printf("orig_resistance is lower then 10\n");
+            // this is a guard for an input value lower than the lowest e12
+            // I choose to return 10 Ohm instead of 0 Ohm
+            res_array[count++] = 10;
+            return count;
+        }
+        
         // try to get the nearest resistor from E12 table
         new_value = get_nearest_e12_resistance(orig_resistance);
 
@@ -54,7 +58,7 @@ int e_resistance(float orig_resistance, float *res_array)
             orig_resistance = orig_resistance - new_value;
         }
 
-    } while (new_value > 0);
+    } while (new_value > 0 && count < 3);
 
     return count;
 }
@@ -100,12 +104,14 @@ int get_nearest_e12_resistance(float orig_resistance)
 
             if (e12 > orig_resistance)
             {
-                // Hey!, current e12 is higher than input resistance...
+                //printf("e12 > orig_resistance %d : %.01f\n", e12, orig_resistance);
+
+                // Hey!, comparing e12 is higher than input resistance
 
                 if(e12 == e12_array[0])
                 {
-                    // The input value is lower than the lowest in E12 series
-                    return 0;
+                    // comparing value is equal to the lowest in E12 series
+                    return e12;
                 }
 
                 // ...return the previous value which was lower
