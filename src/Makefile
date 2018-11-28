@@ -1,68 +1,53 @@
 # compiler
 CC=gcc
 
-#Where to put shared libraries
+# Where to put shared libraries and obj files while building/linking
 LIB_DIR=lib
-MKDIR=mkdir -p
 
-#Bin destination
+# Install destinations
 BIN_DESTINATION = /usr/local/bin
-LIB_DESTINATION = /usr/local/lib
+LIB_DESTINATION = /usr/local/$(LIB_DIR)
 
-#-fPIC generates position independent code,
+#-fPIC generates position independent code in object files
 LIBCOM=-c -fpic
 
-#-shared produces a shared object which can be linked
+#-shared produces a shared object, .so, which can be linked
 LIB_SHARED=-shared -o
 
-# where to put .o files
-ODIR=obj
+############################
 
-# build all
-all: directories electrotest
+# create the lib directory and build all
+all: $(shell mkdir -p $(LIB_DIR)) electrotest
 
-#build lib
-lib: libcomponent.so libpower.so libresistance.so
+# create the lib directory and only the libs and 
+lib: $(shell mkdir -p $(LIB_DIR)) $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so
 
-#LDFLAGS := -L<path to lib> -l<libname>
-electrotest: libcomponent.so libpower.so libresistance.so electrotest.c
-	$(CC) -o $@ electrotest.c -L. -lcomponent -lpower -lresistance -Wl,-rpath,.
+# Electrotest program linking
+electrotest: $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so electrotest.c
+	$(CC) -o $@ electrotest.c -L$(LIB_DIR) -lcomponent -lpower -lresistance -Wl,-rpath,$(LIB_DESTINATION)
 
-#The shared library is created with: 
-#% gcc -shared -fPIC -o libtest.so testfile.o (-shared produces a shared object which can be linked).
-# lib3
-libcomponent.so: component.o
+# Electrotest program linking for debug purpose in current directory
+# The difference from ordinary linking is the -rpath (runtime search path) option which in this case points
+# to the lib subdir in current folder
+electrotest_debug: $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so electrotest.c
+	$(CC) -o electrotest electrotest.c -L$(LIB_DIR) -lcomponent -lpower -lresistance -Wl,-rpath,$(LIB_DIR)
+
+# Shared libraries, rule with automatic variables, all that matches lib%.so, 
+# that is libcomponent.so with dependency component.o and so on
+$(LIB_DIR)/lib%.so: $(LIB_DIR)/%.o
 	$(CC) $(LIB_SHARED) $@ $^
 
-libpower.so: power.o
-	$(CC) $(LIB_SHARED) $@ $^
+# Library objects, *.o files, rule with automatic variables, that is all .o with corresponding .c and .h files
+$(LIB_DIR)/%.o: %.c %.h
+	$(CC) $(LIBCOM) $< -o $@
 
-libresistance.so: resistance.o
-	$(CC) $(LIB_SHARED) $@ $^
+############################
 
-#An object file intended to be used in a shared library is created by gcc with the argument -fPIC:
-#% gcc -c -fPIC testfile.c
-#-c tells the compiler to assemble and compile, but not link, the object file
-#-fPIC generates position independent code,
-component.o: component.c component.h
-	$(CC) $(LIBCOM) component.c
-
-power.o: power.c power.h
-	$(CC) $(LIBCOM) power.c
-
-resistance.o: resistance.c resistance.h
-	$(CC) $(LIBCOM) resistance.c
-
-directories: $(LIB_DIR)
-
-$(LIB_DIR):
-	$(MKDIR) $(LIB_DIR)
-
-install: electrotest
-	cp electrotest $(BIN_DESTINATION); cp libpower.so $(LIB_DESTINATION); cp libcomponent.so $(LIB_DESTINATION); cp libresistance.so $(LIB_DESTINATION)
+install:
+	cp electrotest $(BIN_DESTINATION); cp $(LIB_DIR)/libpower.so $(LIB_DESTINATION); cp $(LIB_DIR)/libcomponent.so $(LIB_DESTINATION); cp $(LIB_DIR)/libresistance.so $(LIB_DESTINATION)
 
 clean:
 	rm -rf *.o *.so *.a electrotest $(LIB_DIR)
 
-uninstall: electrotest
+uninstall:
 	rm $(BIN_DESTINATION)/electrotest; rm $(LIB_DESTINATION)/libpower.so; rm $(LIB_DESTINATION)/libresistance.so;rm $(LIB_DESTINATION)/libcomponent.so 

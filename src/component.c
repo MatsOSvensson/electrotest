@@ -1,5 +1,6 @@
 /*
     Mats Svensson
+    2018-11-28
 */
 #include <stdlib.h>
 #include <stdio.h>
@@ -15,11 +16,24 @@ const int number_of_decades = 6;
     orig_resistance är ersättningsresistansen.
     *res_array är en pekare till en array med 3 resistorer som ska fyllas med värden ur E12-serien.
     count är hur många resistorer ur E12-serien som behövdes för att ersätta orig_resistance,
-    Om inte alla 3 komponenterna behövs ska de som inte används fyllas med värdet 0. 
-    count kan anta värde mellan 0 och 3.
 */
 int e_resistance(float orig_resistance, float *res_array)
 {
+
+    if  (orig_resistance < 0)
+    {
+        // this is a guard for values lower then 0
+        return 0;
+    }
+
+    if  (orig_resistance < 10)
+    {
+        // this is a guard for an input value lower than the lowest e12
+        // I choose to return 10 Ohm instead of 0 Ohm
+        res_array[0] = 10;
+        return 1;
+    }
+
     // number of resulting resistances
     int count = 0;
 
@@ -28,12 +42,12 @@ int e_resistance(float orig_resistance, float *res_array)
 
     do
     {
-        // try to get the nearest resitor from E12 table
+        // try to get the nearest resistor from E12 table
         new_value = get_nearest_e12_resistance(orig_resistance);
 
         if (new_value > 0)
         {
-            // put the matched e12 resitance in the return array
+            // put the matched e12 resistance in the return array
             res_array[count++] = (float)new_value;
 
             // calculate how much is left to match from the e12 series
@@ -64,7 +78,7 @@ int get_nearest_e12_resistance(float orig_resistance)
     e12_array[10] = 68;
     e12_array[11] = 82;
 
-    // Arrat to multiply the resistances up to 8,2 MOhm
+    // Array to multiply the resistances up to 8,2 MOhm
     int decade_array[number_of_decades];
     decade_array[0] = 1;
     decade_array[1] = 10;
