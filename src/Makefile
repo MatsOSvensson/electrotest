@@ -19,17 +19,17 @@ LIB_SHARED=-shared -o
 # Build all
 all: electrotest
 
-# Create the lib directory and only the libs and 
+# Create the lib directory and the libs 
 lib: $(shell mkdir -p $(LIB_DIR)) $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so
 
-# Electrotest program linking
-electrotest: lib electrotest.c
+# Electrotest program building and linking
+electrotest: lib 
 	$(CC) -o $@ electrotest.c -L$(LIB_DIR) -lcomponent -lpower -lresistance -Wl,-rpath,$(LIB_DESTINATION)
 
 # Electrotest program linking for debug purpose in current directory
 # The difference from ordinary linking is the -rpath (runtime search path) option which in this case points
 # to the lib subdir in current folder
-electrotest_debug: $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so electrotest.c
+electrotest_debug: lib
 	$(CC) -o electrotest electrotest.c -L$(LIB_DIR) -lcomponent -lpower -lresistance -Wl,-rpath,$(LIB_DIR)
 
 # Shared libraries, rule with automatic variables, all that matches lib%.so, 
