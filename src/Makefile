@@ -17,13 +17,13 @@ LIB_SHARED=-shared -o
 ############################
 
 # create the lib directory and build all
-all: $(shell mkdir -p $(LIB_DIR)) electrotest
+all: electrotest
 
 # create the lib directory and only the libs and 
 lib: $(shell mkdir -p $(LIB_DIR)) $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so
 
 # Electrotest program linking
-electrotest: $(LIB_DIR)/libcomponent.so $(LIB_DIR)/libpower.so $(LIB_DIR)/libresistance.so electrotest.c
+electrotest: lib electrotest.c
 	$(CC) -o $@ electrotest.c -L$(LIB_DIR) -lcomponent -lpower -lresistance -Wl,-rpath,$(LIB_DESTINATION)
 
 # Electrotest program linking for debug purpose in current directory
