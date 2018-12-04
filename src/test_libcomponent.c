@@ -15,9 +15,12 @@ int main(int argc, char const *argv[])
     test_value(10);
     test_value(1000000);
     test_value(8000000);
-    test_value(8200000);
-    test_value(8090000);
-    test_value(8000001);
+    test_value(9000000);
+    test_value(24000000);
+    test_value(24600000);
+    test_value(27000000);
+    test_value(27600000);
+    
 
     return 0;
 }

@@ -28,25 +28,21 @@ int e_resistance(float orig_resistance, float *res_array)
 
     do
     {
-        //printf("%.01f\n", orig_resistance);
-
-        if  (orig_resistance < 1)
+        if  (orig_resistance < 5)
         {
-            // this is a guard for values lower then 0
-            //printf("orig_resistance is lower then 0\n");
+            // this is a guard for values lower then 5
             return count;
         }
-
-        if  (orig_resistance < 10)
+        else if  (orig_resistance < 10)
         {
-            //printf("orig_resistance is lower then 10\n");
             // this is a guard for an input value lower than the lowest e12
+            // and higher then 5
             // I choose to return 10 Ohm instead of 0 Ohm
             res_array[count++] = 10;
             return count;
         }
         
-        // try to get the nearest resistor from E12 table
+        // try to get the nearest lower resistor from E12 table
         new_value = get_nearest_e12_resistance(orig_resistance);
 
         if (new_value > 0)
@@ -91,6 +87,14 @@ int get_nearest_e12_resistance(float orig_resistance)
     decade_array[4] = 10000;
     decade_array[5] = 100000;
 
+    float highest_12_value = e12_array[11] * decade_array[5];
+
+    if  (orig_resistance > highest_12_value)
+    {
+        // guard for values higher then the max e12 value
+        return highest_12_value;
+    }
+
     int previous_value = 0;
 
     // iterate over the decades, from low to high
@@ -102,10 +106,13 @@ int get_nearest_e12_resistance(float orig_resistance)
             //  ...and multiply the value with decade value
             int e12 = e12_array[e] * decade_array[d];
 
-            if (e12 > orig_resistance)
+            if( e12 == orig_resistance)
             {
-                //printf("e12 > orig_resistance %d : %.01f\n", e12, orig_resistance);
-
+                // the table value equals the wanted value
+                return e12;
+            }
+            else if (e12 > orig_resistance)
+            {
                 // Hey!, comparing e12 is higher than input resistance
 
                 if(e12 == e12_array[0])
